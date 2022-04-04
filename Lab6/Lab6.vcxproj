@@ -148,6 +148,7 @@
     <ClInclude Include="Service.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="Validation.h" />
+    <ClInclude Include="VectDin.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

@@ -3,14 +3,7 @@
 #include <vector>
 using std::vector;
 
-/*#define ElemType Medicament;
-template <typename Medicament>
-class DynamicArr {
-private:
-	ElemType* elems;
-	int size;
-	int capacity;
-};*/
+
 
 class RepoException {
 private:
