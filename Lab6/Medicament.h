@@ -29,7 +29,19 @@ public:
 	void set_denumire(string denumire);
 	void set_producator(string producator);
 	void set_substanta_activa(string sub_act);
-	void set_pret(double pret);
+	void set_pret(double pretNou);
+
+	//bool cmpDenumire(const Medicament& m1, const Medicament& m2);
+	//bool cmpProducator(const Medicament& m1, const Medicament& m2);
+	//bool cmpSubAndPrice(const Medicament& m1, const Medicament& m2);
+
+	bool operator==(const Medicament& ot) noexcept {
+		return denumire == ot.get_denumire();
+	}
+
+	bool operator!=(const Medicament& ot) noexcept {
+		return denumire != ot.get_denumire();
+	}
 };
 
 void test_domain();

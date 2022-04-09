@@ -1,280 +1,215 @@
 #pragma once
-template <typename ElementT>
-class IteratorVectorT;
+#include <string>
+#include "Medicament.h"
 
-#define INITIAL_CAPACITY 5
+using namespace std;
+template <typename T>
+struct Nod {
+	T med;
+	Nod* urm;
+	Nod(T v) :med{ v }, urm{ nullptr }{};
+	Nod(T v, Nod* urm) :med{ v }, urm{ urm }{};
+};
+template <typename T>
+class MyListIterator;
+template <typename T>
+class MyList {
+	Nod<T>* cap;
 
-template <typename ElementT>
-class VectDinNewDeleteT
-{
+	//deameda toate nodurile
+	void elibereazaNoduri() noexcept;
+
+	//face o copie a listei,parcurgand lista si creand noduri in care copiaza medatarii
+	Nod<T>* copiaza(Nod<T>* curent);
+
 public:
-	/*
-	Constructor default
-	Alocam loc pentru 5 elemente
-	*/
-	VectDinNewDeleteT();
+	MyList()noexcept :cap{ nullptr } {};
 
-	/*
-	Constructor de copiere
-	*/
-	VectDinNewDeleteT(const VectDinNewDeleteT& ot); //rule of 3
+	//constructor de copiere
+	MyList(const MyList& ot);
 
-	/*
-	Eliberam memoria
-	*/
-	~VectDinNewDeleteT();//rule of 3
+	//operator de assignment
+	void operator=(const MyList& ot);
 
-	/*
-	Operator assgnment
-	elibereaza ce era in obiectul curent (this)
-	aloca spatiu pentru elemente
-	copieaza elementele din ot in this
-	*/
-	VectDinNewDeleteT& operator=(const VectDinNewDeleteT& ot);//rule of 3
+	//destructor
+	~MyList();
 
+	//returneaza nr de elem
+	size_t size()const noexcept;
 
-	/*
-	Move constructor
-	Apelat daca construim un nou vector dintr-un r-value (ex temporary, expresie de la return)
-	Obiectul ot nu se mai foloseste astfel se poate refolosi interiorul lui
-	*/
-	VectDinNewDeleteT(VectDinNewDeleteT&& ot); //rule of 5 
+	//adauga la inceput
+	void addInceput(T v);
 
-	/*
-	Move assignment
-	Similar cu move constructor
-	Folosit la assignment
-	*/
-	VectDinNewDeleteT& operator=(VectDinNewDeleteT&& ot); //rule of 5 
+	//adauga la sfarsit
+	void push_back(T v);
+
+	//Returneaza primul element
+	T& first()const noexcept;
+
+	//returneaza iterator pozitionat pe primul element
+	MyListIterator<T> begin()const noexcept;
+
+	//returneaza iterator cu nodul nullptr(dupa ultimul element)
+	MyListIterator<T> end()const noexcept;
+
+	//obtine elementul de pe pozitia poz
+	T& operator[](int poz) noexcept;
 
 
-	void add(const ElementT& el);
+	//sterge un element de dupa un nod dat
+	void stergeNod(Nod<T>* predecesor)noexcept;
 
-	ElementT& get(int poz) const;
+	//sterge medatarul dat
+	void stergeValoare(T med);
+};
+template <typename T>
+//iteratorul pt lista
+class MyListIterator {
+	//pozitia curenta-nullptr daca am ajuns la sf listei
+	Nod<T>* curent;
 
-	void set(int poz, const ElementT& el);
+public:
+	MyListIterator(Nod<T>* curent) noexcept :curent{ curent } {}
 
-	int size() const noexcept;
+	//operator !=
+	bool operator!=(const MyListIterator& ot) noexcept;
 
-	friend class IteratorVectorT<ElementT>;
-	//functii care creaza iteratori
-	IteratorVectorT<ElementT> begin();
-	IteratorVectorT<ElementT> end();
+	//operator ++ pt a trece la urmatorul element din lista
+	void operator++() noexcept;
+
+	//operator * pentru a returna elementul curent(medoarea)
+	T& operator*() noexcept;
 
 
-private:
-	int lg;//numar elemente
-	int cap;//capacitate
-	ElementT* elems;//elemente
-
-	void ensureCapacity();
 };
 
-/*
-Constructor default
-Alocam loc pentru 5 elemente
-*/
-template<typename ElementT>
-VectDinNewDeleteT<ElementT>::VectDinNewDeleteT() :elems{ new Element[INITIAL_CAPACITY] }, cap{ INITIAL_CAPACITY }, lg{ 0 } {}
+template <typename T>
+//lista inlantuita
+MyList<T>::MyList(const MyList& ot) {
+	//copiez din ot in obiectul curent
+	cap = copiaza(ot.cap);
+}
+template <typename T>
+void MyList<T>::operator=(const MyList& ot) {
+	elibereazaNoduri();
+	cap = copiaza(ot.cap);
+}
+template <typename T>
+MyList<T>::~MyList() {
+	elibereazaNoduri();
+}
+template <typename T>
+Nod<T>* MyList<T>::copiaza(Nod<T>* curent) {
+	if (curent == nullptr)
+		return nullptr;
 
-/*
-Constructor de copiere
-Obiectul current (this) acum se creaza
-aloca spatiu pentru elemente
-copieaza elementele din ot in this
-*/
-template<typename ElementT>
-VectDinNewDeleteT<ElementT>::VectDinNewDeleteT(const VectDinNewDeleteT<ElementT>& ot) {
-	elems = new ElementT[ot.cap];
-	//copiez elementele
-	for (int i = 0; i < ot.lg; i++) {
-		elems[i] = ot.elems[i];  
+	auto nod = new Nod<T>{ curent->med };
+	nod->urm = copiaza(curent->urm);
+	return nod;
+}
+template <typename T>
+void MyList<T>::addInceput(T v) {
+	Nod<T>* n = new Nod<T>{ v,cap };
+	cap = n;
+}
+template <typename T>
+void MyList<T>::push_back(T v) {
+	auto nodCurent = cap;
+	while (nodCurent != nullptr && nodCurent->urm != nullptr) {
+		nodCurent = nodCurent->urm;
 	}
-	lg = ot.lg;
-	cap = ot.cap;
-}
-
-/*
-Operator assgnment
-elibereaza ce era in obiectul curent (this)
-aloca spatiu pentru elemente
-copieaza elementele din ot in this
-*/
-template<typename ElementT>
-VectDinNewDeleteT<ElementT>& VectDinNewDeleteT<ElementT>::operator=(const VectDinNewDeleteT<ElementT>& ot) {
-	if (this == &ot) {
-		return *this;//s-a facut l=l;
+	if (nodCurent == nullptr) {
+		cap = new Nod<T>{ v,nullptr };
 	}
-	delete[] elems;
-	elems = new ElementT[ot.cap];
-	//copiez elementele
-	for (int i = 0; i < ot.lg; i++) {
-		elems[i] = ot.elems[i]; 
+	else {
+		nodCurent->urm = new Nod<T>{ v,nullptr };
 	}
-	lg = ot.lg;
-	cap = ot.cap;
-	return *this;
+
 }
-
-/*
-Eliberam memoria
-*/
-template<typename ElementT>
-VectDinNewDeleteT<ElementT>::~VectDinNewDeleteT() {
-	delete[] elems;
-}
-
-
-/*
-Move constructor
-Apelat daca construim un nou vector dintr-un r-value (ex temporary)
-Obiectul ot nu se mai foloseste astfel se poate refolosi interiorul lui
-*/
-template<typename ElementT>
-VectDinNewDeleteT<ElementT>::VectDinNewDeleteT(VectDinNewDeleteT&& ot) {
-	// Copy the data pointer from other
-	elems = ot.elems;
-	lg = ot.lg;
-	cap = ot.cap;
-
-	// Release the data pointer from the source object so that  
-	// the destructor does not free the memory multiple times.  
-	ot.elems = nullptr;
-	ot.lg = 0;
-	ot.cap = 0;
-}
-
-/*
-Move assignment
-Similar cu move constructor
-Folosit la assignment
-Elibereaza ce continea obiectul curent (this)
-"fura" interiorul lui ot
-pregateste ot pentru distrugere
-*/
-template<typename ElementT>
-VectDinNewDeleteT<ElementT>& VectDinNewDeleteT<ElementT>::operator=(VectDinNewDeleteT<ElementT>&& ot) {
-	if (this == &ot) {
-		return *this;
+template <typename T>
+size_t MyList<T>::size()const noexcept {
+	auto nodCurent = cap;
+	size_t lg = 0;
+	while (nodCurent != nullptr) {
+		lg++;
+		nodCurent = nodCurent->urm;
 	}
-	delete[] elems;
-	// Copy the data pointer from other
-	elems = ot.elems;
-	lg = ot.lg;
-	cap = ot.cap;
-
-	// Release the data pointer from the source object so that  
-	// the destructor does not free the memory multiple times.  
-	ot.elems = nullptr;
-	ot.lg = 0;
-	ot.cap = 0;
-	return *this;
-}
-
-template<typename ElementT>
-void VectDinNewDeleteT<ElementT>::add(const ElementT& el) {
-	ensureCapacity();//daca e nevoie mai alocam memorie
-	elems[lg++] = el;
-}
-
-template<typename ElementT>
-ElementT& VectDinNewDeleteT<ElementT>::get(int poz) const {
-	return elems[poz];
-}
-
-template<typename ElementT>
-void VectDinNewDeleteT<ElementT>::set(int poz, const ElementT& el) {
-	elems[poz] = el;
-}
-
-template<typename ElementT>
-int VectDinNewDeleteT<ElementT>::size() const noexcept {
 	return lg;
 }
-
-template<typename ElementT>
-void VectDinNewDeleteT<ElementT>::ensureCapacity() {
-	if (lg < cap) {
-		return; //mai avem loc
+template <typename T>
+T& MyList<T>::operator[](int poz) noexcept {
+	auto nodCurent = cap;
+	int lg = 0;
+	while (lg < poz) {
+		lg++;
+		nodCurent = nodCurent->urm;
 	}
-	cap *= 2;
-	ElementT* aux = new ElementT[cap];
-	for (int i = 0; i < lg; i++) {
-		aux[i] = elems[i];
+	return nodCurent->med;
+}
+template <typename T>
+T& MyList<T>::first()const noexcept {
+	return cap->med;
+}
+template <typename T>
+void MyList<T>::elibereazaNoduri() noexcept {
+	auto nodCurent = cap;
+	while (nodCurent != nullptr) {
+		auto aux = nodCurent->urm;
+		delete nodCurent;
+		nodCurent = aux;
 	}
-	delete[] elems;
-	elems = aux;
-}
-
-template<typename ElementT>
-IteratorVectorT<ElementT> VectDinNewDeleteT<ElementT>::begin()
-{
-	return IteratorVectorT<ElementT>(*this);
-}
-
-template<typename ElementT>
-IteratorVectorT<ElementT> VectDinNewDeleteT<ElementT>::end()
-{
-	return IteratorVectorT<ElementT>(*this, lg);
-}
-
-template<typename ElementT>
-class IteratorVectorT {
-private:
-	const VectDinNewDeleteT<ElementT>& v;
-	int poz = 0;
-public:
-	IteratorVectorT(const VectDinNewDeleteT<ElementT>& v) noexcept;
-	IteratorVectorT(const VectDinNewDeleteT<ElementT>& v, int poz)noexcept;
-	bool valid()const;
-	ElementT& element() const;
-	void next();
-	ElementT& operator*();
-	IteratorVectorT& operator++();
-	bool operator==(const IteratorVectorT& ot)noexcept;
-	bool operator!=(const IteratorVectorT& ot)noexcept;
-};
-
-template<typename ElementT>
-IteratorVectorT<ElementT>::IteratorVectorT(const VectDinNewDeleteT<ElementT>& v) noexcept :v{ v } {}
-
-template<typename ElementT>
-IteratorVectorT<ElementT>::IteratorVectorT(const VectDinNewDeleteT<ElementT>& v, int poz)noexcept : v{ v }, poz{ poz } {}
-
-template<typename ElementT>
-bool IteratorVectorT<ElementT>::valid()const {
-	return poz < v.lg;
-}
-
-template<typename ElementT>
-ElementT& IteratorVectorT<ElementT>::element() const {
-	return v.elems[poz];
-}
-
-template<typename ElementT>
-void IteratorVectorT<ElementT>::next() {
-	poz++;
-}
-
-template<typename ElementT>
-ElementT& IteratorVectorT<ElementT>::operator*() {
-	return element();
-}
-
-template<typename ElementT>
-IteratorVectorT<ElementT>& IteratorVectorT<ElementT>::operator++() {
-	next();
-	return *this;
-}
-
-template<typename ElementT>
-bool IteratorVectorT<ElementT>::operator==(const IteratorVectorT<ElementT>& ot) noexcept {
-	return poz == ot.poz;
-}
-
-template<typename ElementT>
-bool IteratorVectorT<ElementT>::operator!=(const IteratorVectorT<ElementT>& ot)noexcept {
-	return !(*this == ot);
+	cap = nullptr;
 }
 
 
+template <typename T>
+void MyList<T>::stergeNod(Nod<T>* predecesor) noexcept {
+	auto* deSters = predecesor->urm;
+	predecesor->urm = predecesor->urm->urm;
+	delete deSters;
+}
+
+template <typename T>
+void MyList<T>::stergeValoare(T c) {
+	//if (cap == nullptr)
+		//return;
+	//sterg de pe prima pozitie
+	if (cap->med == c) {
+		auto* deSters = cap;
+		cap = cap->urm;
+		delete deSters;
+		return;
+	}
+	//parcurg pana ajung la predecesorul nodului cautat
+	auto* elem = cap;
+	while (elem->urm != nullptr && elem->urm->med != c) {
+		elem = elem->urm;
+	}
+	if (elem->urm != nullptr)
+		stergeNod(elem);
+}
+
+template <typename T>
+MyListIterator<T> MyList<T>::begin() const noexcept {
+	return MyListIterator<T>{ cap };
+}
+template <typename T>
+MyListIterator<T> MyList<T>::end()const noexcept {
+	return MyListIterator<T>{ nullptr };
+
+}
+
+
+//iterator
+template <typename T>
+bool MyListIterator<T>::operator!=(const MyListIterator& ot) noexcept {
+	return curent != ot.curent;
+}
+template <typename T>
+void MyListIterator<T>::operator++() noexcept {
+	curent = curent->urm;
+}
+template <typename T>
+T& MyListIterator<T>::operator*() noexcept {
+	return curent->med;
+}

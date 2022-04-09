@@ -1,5 +1,6 @@
 #include "Repository.h"
 #include <assert.h>
+#include <algorithm>
 
 const vector<Medicament>& Repo::get_all() {
 	return this->MedicineList;
@@ -36,6 +37,16 @@ void Repo::delete_medicine(const Medicament& m) {
 	}
 	else
 		throw(RepoException("Medicamentul cu denumirea " + m.get_denumire() + " si producatorul " + m.get_producator() + " nu exista in lista\n"));
+	/*int found = 0;
+	for (auto const& med : MedicineList) {
+		if (med.get_denumire() == m.get_denumire() && med.get_producator() == m.get_producator()) {
+			found = 1;
+			MedicineList.stergeValoare(med);
+			break;
+		}
+	}
+	if(found == 0)
+		throw(RepoException("Medicamentul cu denumirea " + m.get_denumire() + " si producatorul " + m.get_producator() + " nu exista in lista\n"));*/
 }
 
 void Repo::modify(const Medicament& m)

@@ -1,5 +1,6 @@
 #pragma once
 #include "Medicament.h"
+#include "VectDin.h"
 #include <vector>
 using std::vector;
 
@@ -18,6 +19,7 @@ public:
 class Repo {
 private:
 	vector<Medicament> MedicineList;
+	//MyList<Medicament> MedicineList;
 public:
 	Repo() = default;
 	

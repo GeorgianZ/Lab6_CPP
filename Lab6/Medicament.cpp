@@ -33,6 +33,23 @@ void Medicament::set_pret(double pretNou) {
 	this->pret = pretNou;
 }
 
+/*bool Medicament::cmpDenumire(const Medicament& m1, const Medicament& m2) {
+	return m1.get_denumire() < m2.get_denumire();
+}
+
+bool Medicament::cmpProducator(const Medicament& m1, const Medicament& m2) {
+	return m1.get_producator() < m2.get_producator();
+}
+
+bool Medicament::cmpSubAndPrice(const Medicament& m1, const Medicament& m2) {
+	if (m1.get_substanta_activa() < m2.get_substanta_activa())
+		return true;
+	if (m1.get_substanta_activa() > m2.get_substanta_activa())
+		return false;
+	if (m1.get_substanta_activa() == m2.get_substanta_activa())
+		return m1.get_pret() < m2.get_pret();
+}*/
+
 void test_domain()
 {
 	Medicament m1{ "Paracetamol","Farmacisti","nuj",25 };

@@ -39,9 +39,15 @@ const Medicament& Service::find(string denumire, string producator) {
 
 const vector<Medicament> Service::filter_pret(double pret) {
 	vector<Medicament> v;
-	for (auto m : get_all())
+	/*for (auto m : get_all())
 		if (m.get_pret() > pret)
 			v.push_back(m);
+	*/
+	copy_if(get_all().begin(), get_all().end(), back_inserter(v), 
+		[=](const Medicament& m) 
+		{
+			return m.get_pret() > pret; 
+		});
 	if (v.size() == 0)
 		throw RepoException("Nu exista medicamente cu pretul mai mare decat cel dat!\n");
 	return v;
@@ -49,70 +55,46 @@ const vector<Medicament> Service::filter_pret(double pret) {
 
 const vector<Medicament> Service::filter_sub(string subs_act) {
 	vector<Medicament> v;
-	for (auto m : get_all())
+	/*for (auto m : get_all())
 		if (m.get_substanta_activa() == subs_act)
 			v.push_back(m);
+			*/
+	copy_if(get_all().begin(), get_all().end(), back_inserter(v),
+		[=](const Medicament& m)
+		{
+			return m.get_substanta_activa() == subs_act;
+		});
 	if (v.size() == 0)
 		throw RepoException("Nu exista medicamente cu aceasta substanta activa!\n");
 	return v;
 }
 
 const vector<Medicament> Service::sort_by_denumire() {
-	vector <Medicament> sorted;
-	sorted = get_all();
-	int g = 0;
-	do {
-		g = 0;
-		for(int i=0;i<sorted.size()-1;i++)
-			if (sorted[i].get_denumire() > sorted[i + 1].get_denumire()) {
-				auto aux = sorted[i];
-				sorted[i] = sorted[i + 1];
-				sorted[i + 1] = aux;
-				g = 1;
-			}
-	} while (g == 1);
+	vector<Medicament> sorted {repo.get_all()};
+	sort(sorted.begin(), sorted.end(), 
+		[=](const Medicament& m1, const Medicament& m2) {
+			return m1.get_denumire() < m2.get_denumire();
+		});
 	return sorted;
 }
 
 const vector<Medicament> Service::sort_by_subAndPrice() {
-	vector <Medicament> sorted;
+	vector<Medicament> sorted;
 	sorted = get_all();
-	int g = 0;
-	do {
-		g = 0;
-		for (int i = 0; i < sorted.size() - 1; i++) {
-			if (sorted[i].get_substanta_activa() > sorted[i + 1].get_substanta_activa()) {
-				auto aux = sorted[i];
-				sorted[i] = sorted[i + 1];
-				sorted[i + 1] = aux;
-				g = 1;
-			}
-			if (sorted[i].get_substanta_activa() == sorted[i + 1].get_substanta_activa())
-				if (sorted[i].get_pret() > sorted[i + 1].get_pret()) {
-					auto aux = sorted[i];
-					sorted[i] = sorted[i + 1];
-					sorted[i + 1] = aux;
-					g = 1;
-				}
-		}
-	} while (g == 1);
+	sort(sorted.begin(), sorted.end(),
+		[=](const Medicament& m1, const Medicament& m2) {
+			return m1.get_substanta_activa() < m1.get_substanta_activa() || m1.get_pret() < m2.get_pret();
+		});
 	return sorted;
 }
 
 const vector<Medicament> Service::sort_by_producator() {
-	vector <Medicament> sorted;
+	vector<Medicament> sorted;
 	sorted = get_all();
-	int g = 0;
-	do {
-		g = 0;
-		for (int i = 0; i < sorted.size() - 1; i++)
-			if (sorted[i].get_producator() > sorted[i + 1].get_producator()) {
-				auto aux = sorted[i];
-				sorted[i] = sorted[i + 1];
-				sorted[i + 1] = aux;
-				g = 1;
-			}
-	} while (g == 1);
+	sort(sorted.begin(), sorted.end(),
+		[=](const Medicament& m1, const Medicament& m2) {
+			return m1.get_producator() < m2.get_producator();
+		});
 	return sorted;
 }
 
