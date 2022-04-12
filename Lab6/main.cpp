@@ -27,5 +27,7 @@ void test_all()
 	test_filter_pret();
 	test_filter_sub();
 	test_sort();
+	test_reteta();
+	test_map();
 	cout << "Finish tests!\n";
 }

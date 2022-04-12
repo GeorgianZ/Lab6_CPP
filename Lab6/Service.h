@@ -1,6 +1,8 @@
 #pragma once
 #include "Repository.h"
 #include "Validation.h"
+#include "Reteta.h"
+#include <unordered_map>
 #include <string>
 using std::string;
 
@@ -8,6 +10,9 @@ class Service {
 private:
 	Repo& repo;
 	Validate& val;
+
+	Reteta reteta;
+	unordered_map<string, int> map;
 public:
 	Service(Repo& repo, Validate& val) : repo{ repo }, val{ val } {};
 
@@ -97,6 +102,39 @@ public:
 	* return: lista sortata dupa substanta activa si pret
 	*/
 	const vector<Medicament> sort_by_subAndPrice();
+
+	/*
+	* Adauga un medicament cu denumirea si producatorul dat
+	*
+	* @param denumirea: denumirea medicamentului care se adauga (string)
+	* @param producator: producatorul medicamentului care se adauga (string)
+	*
+	* @throws: RepoException daca nu exista medicament cu denumirea si producatorul dat
+	*/
+	void addToReteta(string denumire, string producator);
+
+	/*
+	* Adauga random un numar de medicamente dat de utilizator
+	* 
+	* @param number: numarul de medicamente care trebuie adaugat
+	* 
+	* @throws: RepoException daca vrem sa adaugam mai multe medicamente decat exista in repository
+	*/
+	void addRandom(int number);
+
+	/*
+	* Returneaza lista de medicamente din reteta
+	*/
+	vector<Medicament> getReteta();
+
+	/*
+	* Sterge medicamentele de pe reteta
+	*/
+	void deleteReteta();
+
+	void createMap();
+	unordered_map<string, int> getMap();
+
 };
 
 void test_add_service();
@@ -106,3 +144,5 @@ void test_find();
 void test_filter_pret();
 void test_filter_sub();
 void test_sort();
+void test_reteta();
+void test_map();

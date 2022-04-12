@@ -1,6 +1,17 @@
 #include "UI.h"
 #include <iostream>
+#include <fstream>
+
+ofstream f("file.cvs");
 using namespace std;
+
+void Console::printRetetaMenu() {
+	cout << "1 - adauga un medicament\n";
+	cout << "2 - adauga random un numar de medicamente\n";
+	cout << "3 - sterge reteta\n";
+	cout << "4 - exporta reteta\n";
+	cout << "5 - parasire meniu reteta\n";
+}
 
 void Console::printMenu() {
 	cout << "1 - adauga\n";
@@ -9,7 +20,8 @@ void Console::printMenu() {
 	cout << "4 - filtreaza\n";
 	cout << "5 - sorteaza\n";
 	cout << "6 - printeaza\n";
-	cout << "7 - exit\n";
+	cout << "7 - interfata reteta\n";
+	cout << "8 - exit\n";
 }
 
 void Console::print() {
@@ -156,8 +168,75 @@ void Console::ui_sort() {
 		cout << "Lista nu contine medicamente!\n";
 }
 
+void Console::reteta_add() {
+	string denumire, producator;
+	cout << "Introduceti denumirea: ";
+	getline(cin >> ws, denumire);
+	cout << "Introduceti producatorul: ";
+	getline(cin >> ws, producator);
+	try {
+		serv.addToReteta(denumire, producator);
+	}
+	catch (RepoException& re) {
+		cout << re.get_errorMsg();
+	}
+}
+
+void Console::reteta_sterge() {
+	serv.deleteReteta();
+	cout << "Reteta a fost stearsa!\n";
+}
+
+
+
+void Console::reteta_add_rand() {
+	int numar;
+	cout << "Introduceti numarul de retete care doriti sa fie adaugate: ";
+	cin >> numar;
+	try {
+		serv.addRandom(numar);
+	}
+	catch (RepoException& re) {
+		cout << re.get_errorMsg();
+	}
+}
+
+void Console::reteta_export() {
+	if (serv.getReteta().size() == 0)
+		f << "Reteta este goala!\n";
+	else
+		for (auto x : serv.getReteta())
+			f << "Denumire " << x.get_denumire() << " | Producator " << x.get_producator() << " | Substanta activa " << x.get_substanta_activa() << " | Pret " << x.get_pret() << "\n";
+
+}
+
+void Console::ui_reteta() {
+	bool run = 1;
+	int cmd2;
+	while (run) {
+		printRetetaMenu();
+		cout << "Introduceti o comanda: ";
+		cin >> cmd2;
+		switch (cmd2) {
+		case 1:reteta_add(); break;
+
+		case 2:reteta_add_rand(); break;
+
+		case 3:reteta_sterge(); break;
+
+		case 4:reteta_export(); break;
+
+		case 5:
+			cout << "Ati parasit interfata retetei!\n";
+			run = 0;
+			break;
+		}
+	}
+}
+
 void Console::run() {
 	bool running = 1;
+	f << " ";
 	int cmd;
 	while (running) {
 		printMenu();
@@ -175,8 +254,10 @@ void Console::run() {
 		case 5:ui_sort(); break;
 
 		case 6:print(); break;
+		
+		case 7:ui_reteta(); break;
 
-		case 7:
+		case 8:
 			cout << "Ati parasit aplicatia!\n";
 			running = 0;
 			break;

@@ -4,6 +4,21 @@
 #include <iostream>
 #include <algorithm>
 using std::cout;
+
+void Service::createMap() {
+	vector<Medicament> v = repo.get_all();
+	for (auto x : v) {
+		map[x.get_substanta_activa()] = 0;
+	}
+	for (auto x : v) {
+		map[x.get_substanta_activa()]++;
+	}
+}
+
+unordered_map<string, int> Service::getMap() {
+	return map;
+}
+
 void Service::adauga(string denumire, string producator, string substanta_activa, double pret) {
 	Medicament m{ denumire, producator, substanta_activa, pret };
 	string err = val.valideaza(m);
@@ -96,6 +111,26 @@ const vector<Medicament> Service::sort_by_producator() {
 			return m1.get_producator() < m2.get_producator();
 		});
 	return sorted;
+}
+
+void Service::addToReteta(string denumire, string producator) {
+	auto m = find(denumire, producator);
+	reteta.adaugaMedicament(m);
+}
+
+void Service::addRandom(int number) {
+	auto list = get_all();
+	if (number > list.size())
+		throw(RepoException("Nu exista atatea medicamente in lista!\n"));
+	reteta.adaugaRandom(list, number);
+}
+
+void Service::deleteReteta() {
+	reteta.deleteReteta();
+}
+
+vector<Medicament> Service::getReteta() {
+	return reteta.getReteta();
 }
 
 
@@ -240,4 +275,48 @@ void test_sort()
 	assert(v[0].get_pret() == 45);
 	assert(v[1].get_pret() == 345);
 	assert(v[2].get_pret() == 401);
+}
+
+void test_reteta() {
+	Repo repo;
+	Validate val;
+	Service serv{ repo, val };
+	serv.adauga("v", "nu", "fdsfs", 401);
+	serv.adauga("da", "Farmacisti", "da", 345);
+	serv.adauga("ceva", "Baieti", "da", 45);
+	serv.addRandom(2);
+	assert(serv.getReteta().size() == 2);
+	serv.deleteReteta();
+	assert(serv.getReteta().size() == 0);
+	serv.addToReteta("v", "nu");
+	assert(serv.getReteta().size() == 1);
+	try {
+		serv.addToReteta("chestie", "dap");
+	}
+	catch (RepoException&) {
+		assert(true);
+	}
+	try {
+		serv.addRandom(4);
+	}
+	catch (RepoException&) {
+		assert(true);
+	}
+}
+
+void test_map() {
+	Repo repo;
+	Validate val;
+	Service serv{ repo, val };
+	serv.adauga("da", "ceva", "s1", 100);
+	serv.adauga("nu", "altceva", "s1", 100);
+	serv.adauga("chestie", "nuj", "s2", 100);
+	serv.adauga("pastile", "oameni", "s2", 100);
+	serv.adauga("nebunie", "lucru", "s2", 100);
+	serv.adauga("ceva", "asa", "s3", 100);
+	serv.createMap();
+	unordered_map<string, int> map = serv.getMap();
+	assert(map["s1"] == 2);
+	assert(map["s2"] == 3);
+	assert(map["s3"] == 1);
 }

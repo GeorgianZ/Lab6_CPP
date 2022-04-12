@@ -33,6 +33,12 @@
     <ClInclude Include="VectDin.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Reteta.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Medicament.cpp">
@@ -53,5 +59,16 @@
     <ClCompile Include="Validation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Reteta.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="file.cvs">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

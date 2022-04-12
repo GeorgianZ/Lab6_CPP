@@ -19,4 +19,10 @@ public:
 	void ui_filter();
 	void ui_sort();
 	void run();
+	void ui_reteta();
+	void printRetetaMenu();
+	void reteta_add();
+	void reteta_add_rand();
+	void reteta_sterge();
+	void reteta_export();
 };
