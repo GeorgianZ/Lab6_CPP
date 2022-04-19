@@ -1,8 +1,11 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <sstream>
 
 using std::string;
+using std::ostream;
+using std::istream;
 
 class Medicament {
 private:
@@ -14,7 +17,7 @@ public:
 	/*
 	* Stergem constructorul default pentru a nu permite sa se creeze un medicament fara argumente
 	*/
-	Medicament() = delete;
+	Medicament() = default;
 	Medicament(string denumire, string producator, string substanta_activa, double pret) : denumire{ denumire }, producator{ producator }, substanta_activa{ substanta_activa }, pret{ pret }{};
 
 	Medicament(const Medicament& ot) :denumire{ ot.denumire }, producator{ ot.producator }, substanta_activa{ ot.substanta_activa }, pret{ ot.pret }{
@@ -42,6 +45,26 @@ public:
 	bool operator!=(const Medicament& ot) noexcept {
 		return denumire != ot.get_denumire();
 	}
+
+	/**
+	* Functie generica pentru afisarea unui medicament
+	*
+	* @params: out - o referinta la un string de tip ostream
+	*		   medicament - o referinta constanta la un medicament
+	*
+	* @return: o referinta la un string de tip ostream
+	*/
+	friend ostream& operator<<(ostream& out, const Medicament& m);
+
+	/**
+	* Functie generica pentru citirea unui medicament
+	*
+	* @params: in - o referinta la un string de tip istream
+	*		   masina - o referinta la un medicament
+	*
+	* @return: o referinta la un string de tip istream
+	*/
+	friend istream& operator>>(istream& in, Medicament& m);
 };
 
 void test_domain();

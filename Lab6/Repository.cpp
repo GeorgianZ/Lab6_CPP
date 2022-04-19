@@ -28,15 +28,18 @@ bool Repo::exist(const Medicament& m) {
 		return false;}
 }
 
-void Repo::delete_medicine(const Medicament& m) {
+const Medicament Repo::delete_medicine(const Medicament& m) {
+	Medicament med{ "", "", "", 1 };
 	if (exist(m)) {
 		for (int i = 0; i < MedicineList.size(); i++)
 			if (MedicineList[i].get_denumire() == m.get_denumire() && MedicineList[i].get_producator() == m.get_producator()) {
+				med = MedicineList[i];
 				MedicineList.erase(MedicineList.begin() + i);
 				break;}
 	}
 	else
 		throw(RepoException("Medicamentul cu denumirea " + m.get_denumire() + " si producatorul " + m.get_producator() + " nu exista in lista\n"));
+	return med;
 	/*int found = 0;
 	for (auto const& med : MedicineList) {
 		if (med.get_denumire() == m.get_denumire() && med.get_producator() == m.get_producator()) {
@@ -49,14 +52,16 @@ void Repo::delete_medicine(const Medicament& m) {
 		throw(RepoException("Medicamentul cu denumirea " + m.get_denumire() + " si producatorul " + m.get_producator() + " nu exista in lista\n"));*/
 }
 
-void Repo::modify(const Medicament& m)
+const Medicament Repo::modify(const Medicament& m)
 {
+	Medicament med{ "","","",1 };
 	bool flag = 0;
 	if (exist(m))
 		throw RepoException("Medicamentul exista deja in lista!\n");
 	else {
 		for (int i = 0; i < MedicineList.size(); i++)
 			if (MedicineList[i].get_denumire() == m.get_denumire()) {
+				med = MedicineList[i];
 				MedicineList[i].set_producator(m.get_producator());
 				MedicineList[i].set_substanta_activa(m.get_substanta_activa());
 				MedicineList[i].set_pret(m.get_pret());
@@ -66,6 +71,7 @@ void Repo::modify(const Medicament& m)
 	}
 	if (flag == 0)
 		throw RepoException("Medicamentul cu denumirea data nu exista in lista!\n");
+	return med;
 
 }
 

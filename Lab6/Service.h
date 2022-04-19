@@ -3,14 +3,18 @@
 #include "Validation.h"
 #include "Reteta.h"
 #include <unordered_map>
+#include "Undo.h"
 #include <string>
+#include "FileRepository.h"
+using std::unique_ptr;
 using std::string;
+
 
 class Service {
 private:
 	Repo& repo;
 	Validate& val;
-
+	std::vector<unique_ptr<Undo>> undoActions;
 	Reteta reteta;
 	unordered_map<string, int> map;
 public:
@@ -135,6 +139,13 @@ public:
 	void createMap();
 	unordered_map<string, int> getMap();
 
+	/*
+	* Executa functia de undo pentru elementele din repository
+	* throws Exception: daca nu exista elemente in lista
+	* return: -
+	*/
+	void undo();
+
 };
 
 void test_add_service();
@@ -146,3 +157,4 @@ void test_filter_sub();
 void test_sort();
 void test_reteta();
 void test_map();
+void test_undo();

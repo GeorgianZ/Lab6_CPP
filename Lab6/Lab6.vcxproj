@@ -143,16 +143,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="FileRepository.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Medicament.h" />
     <ClInclude Include="Repository.h" />
     <ClInclude Include="Reteta.h" />
     <ClInclude Include="Service.h" />
     <ClInclude Include="UI.h" />
+    <ClInclude Include="Undo.h" />
     <ClInclude Include="Validation.h" />
     <ClInclude Include="VectDin.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FileRepository.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Medicament.cpp" />
@@ -164,6 +167,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="file.cvs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="fileRepo.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

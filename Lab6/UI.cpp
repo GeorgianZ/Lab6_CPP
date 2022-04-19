@@ -21,7 +21,8 @@ void Console::printMenu() {
 	cout << "5 - sorteaza\n";
 	cout << "6 - printeaza\n";
 	cout << "7 - interfata reteta\n";
-	cout << "8 - exit\n";
+	cout << "8 - Undo\n";
+	cout << "9 - exit\n";
 }
 
 void Console::print() {
@@ -210,6 +211,15 @@ void Console::reteta_export() {
 
 }
 
+void Console::ui_undo() {
+	try {
+		serv.undo();
+	}
+	catch (RepoException& re) {
+		cout << re.get_errorMsg();
+	}
+}
+
 void Console::ui_reteta() {
 	bool run = 1;
 	int cmd2;
@@ -257,7 +267,9 @@ void Console::run() {
 		
 		case 7:ui_reteta(); break;
 
-		case 8:
+		case 8:ui_undo(); break;
+
+		case 9:
 			cout << "Ati parasit aplicatia!\n";
 			running = 0;
 			break;

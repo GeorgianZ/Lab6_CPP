@@ -35,7 +35,7 @@ public:
 	* 
 	* throws: RepoException daca medicamentul exista deja in lista
 	*/
-	void add(const Medicament& m);
+	virtual void add(const Medicament& m);
 	
 	/*
 	* Returneaza o lista cu toate medicamentele
@@ -66,7 +66,7 @@ public:
 	* 
 	* throws: RepoException daca medicamentul nu exista in lista
 	*/
-	void delete_medicine(const Medicament& m);
+	virtual const Medicament delete_medicine(const Medicament& m);
 
 	/*
 	* Modifica un medicament din lista
@@ -75,7 +75,7 @@ public:
 	* 
 	* throws: RepoException daca medicamentul exista deja in lista
 	*/
-	void modify(const Medicament& m);
+	virtual const Medicament modify(const Medicament& m);
 };
 
 

@@ -25,6 +25,7 @@ void Service::adauga(string denumire, string producator, string substanta_activa
 	if (err.size() > 0)
 		throw ValidationException(err);
 	repo.add(m);
+	undoActions.push_back(std::make_unique<UndoAdauga>(m, repo));
 }
 
 const vector<Medicament>& Service::get_all() {
@@ -35,7 +36,8 @@ void Service::sterge(string denumire, string producator) {
 	string subs_act = "subs";
 	double pret = 1;
 	Medicament m{ denumire, producator, subs_act, pret };
-	repo.delete_medicine(m);
+	Medicament med = repo.delete_medicine(m);
+	undoActions.push_back(std::make_unique<UndoSterge>(med, repo));
 }
 
 
@@ -45,7 +47,8 @@ void Service::modifica(string denumire, string producator, string substanta_acti
 	string err = val.valideaza(m);
 	if (err.size() > 0)
 		throw ValidationException(err);
-	repo.modify(m);
+	Medicament med = repo.modify(m);
+	undoActions.push_back(std::make_unique<UndoModifica>(med, repo));
 }
 
 const Medicament& Service::find(string denumire, string producator) {
@@ -131,6 +134,13 @@ void Service::deleteReteta() {
 
 vector<Medicament> Service::getReteta() {
 	return reteta.getReteta();
+}
+
+void Service::undo() {
+	if (undoActions.empty())
+		throw RepoException("Nu mai exista operatii la care se poate faca undo!\n");
+	undoActions.back()->doUndo();
+	undoActions.pop_back();
 }
 
 
@@ -319,4 +329,26 @@ void test_map() {
 	assert(map["s1"] == 2);
 	assert(map["s2"] == 3);
 	assert(map["s3"] == 1);
+}
+
+void test_undo() {
+
+	Repo repo;
+	Validate val;
+	Service serv{ repo, val };
+	serv.adauga("Paracetamol", "Farmacisti", "nuj", 25);
+	serv.adauga("da", "nu", "fdsfs", 401);
+	serv.adauga("Ceva", "Baieti", "subs", 456);
+	serv.modifica("da", "prod", "subs", 100);
+	assert(serv.get_all().size() == 3);
+	serv.sterge("Paracetamol", "Farmacisti");
+	assert(serv.get_all().size() == 2);
+	serv.undo();
+	assert(serv.get_all().size() == 3);
+	serv.undo();
+	assert(serv.get_all()[0].get_denumire() == "da");
+	assert(serv.get_all()[0].get_producator() == "nu");
+	assert(serv.get_all()[0].get_pret() == 401);
+	serv.undo();
+	assert(serv.get_all().size() == 2);
 }

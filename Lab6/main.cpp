@@ -1,5 +1,6 @@
 #include "UI.h"
 #include <iostream>
+#include <crtdbg.h>
 using std::cout;
 
 void test_all();
@@ -29,5 +30,6 @@ void test_all()
 	test_sort();
 	test_reteta();
 	test_map();
+	test_undo();
 	cout << "Finish tests!\n";
 }

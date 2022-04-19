@@ -25,4 +25,5 @@ public:
 	void reteta_add_rand();
 	void reteta_sterge();
 	void reteta_export();
+	void ui_undo();
 };

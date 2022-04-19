@@ -33,6 +33,24 @@ void Medicament::set_pret(double pretNou) {
 	this->pret = pretNou;
 }
 
+ostream& operator<<(ostream& out, const Medicament& m) {
+	out << m.get_denumire() << " | " << m.get_producator() << " | " << m.get_substanta_activa() << " | " << m.get_pret() << std::endl;
+	return out;
+}
+
+istream& operator>>(istream& in, Medicament& m) {
+	string line, now;
+	getline(in, line);
+	std::istringstream input(line);
+	input >> m.denumire; input >> now;
+	input >> m.producator; input >> now;
+	input >> m.substanta_activa; input >> now;
+	input >> m.pret;
+
+
+	return in;
+}
+
 /*bool Medicament::cmpDenumire(const Medicament& m1, const Medicament& m2) {
 	return m1.get_denumire() < m2.get_denumire();
 }
